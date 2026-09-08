@@ -26,10 +26,19 @@ The notebook walks through the full workflow of a machine learning project, step
 12. **Save the trained model** — with an explanation of what a `.keras` file actually contains
 
 It finishes with a **Summary** recapping the whole workflow and key terms (loss, accuracy,
-overfitting, normalisation, etc.), plus a **Bonus** section on Convolutional Neural Networks
-(CNNs) — what they are, how/why they differ from the simple network built here, exactly which
-cells above you'd need to change to convert it to a CNN, and a runnable CNN cell you can use to
-compare its accuracy directly against the original model (no need to edit anything above it).
+overfitting, normalisation, etc.), followed by two bonus sections:
+
+- **Watch backpropagation happen** — un-hides what `model.fit()` normally does invisibly. A
+  minimal one-weight toy example computes a gradient with `tf.GradientTape()` and checks it
+  against a hand-worked calculus derivative (they match exactly), then the same technique is
+  applied to the real trained model — inspecting actual gradient values on a real batch, and
+  applying one genuine optimizer step to watch a specific weight change by a real, measurable
+  amount (its original weights are restored immediately afterwards, so the demo has no side
+  effects on the rest of the notebook).
+- **Try a CNN yourself** — what a Convolutional Neural Network (CNN) is, how/why it differs from
+  the simple network built here, exactly which cells above you'd need to change to convert it to
+  a CNN, and a runnable CNN cell you can use to compare its accuracy directly against the original
+  model (no need to edit anything above it).
 
 ## Requirements
 
@@ -148,3 +157,5 @@ down the output's left edge to toggle it between boxed and full-height.
   Summary section explains what a CNN is and why it tends to perform better on image data
 - Test the model against unusual or messy handwriting on the drawing canvas, and use the "teach
   the model" feature to correct it live
+- Dig into the **Watch backpropagation happen** bonus section, change the pixel index it inspects,
+  and see how the gradient values change for yourself
