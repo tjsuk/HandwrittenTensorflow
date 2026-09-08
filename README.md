@@ -1,7 +1,7 @@
 # Handwritten Digit Recognition with TensorFlow
 
 A beginner-friendly Jupyter notebook that trains a neural network to recognise
-handwritten digits (0-9) using the [MNIST dataset](http://yann.lecun.com/exdb/mnist/)
+handwritten digits (0-9) using the [MNIST dataset](https://systemds.apache.org/datasets/mnist)
 and TensorFlow/Keras. It's written as a self-contained **learning exercise**, not just
 a script to run — every step includes plain-English explanations of *what* the code
 does and *why*, what results to expect, and what to do if something looks off.
@@ -152,10 +152,57 @@ down the output's left edge to toggle it between boxed and full-height.
 
 ## Ideas to extend
 
-- Train for more epochs, or add more layers, and see how accuracy and training time change
-- Try a Convolutional Neural Network (CNN) instead of the simple dense network — the notebook's
-  Summary section explains what a CNN is and why it tends to perform better on image data
-- Test the model against unusual or messy handwriting on the drawing canvas, and use the "teach
-  the model" feature to correct it live
-- Dig into the **Watch backpropagation happen** bonus section, change the pixel index it inspects,
-  and see how the gradient values change for yourself
+### Train for more epochs, or add more layers
+
+In the Step 7 code cell, change `history = model.fit(x_train, y_train, epochs=5)` to a higher
+number, e.g. `epochs=15`. Re-run that cell (and everything below it, since Step 8 onwards use the
+now-more-trained model), and compare the new test accuracy printed in Step 8 against the ~97-98%
+you saw before. Watch the accuracy Keras prints each epoch as it trains — if it stops improving
+much epoch-to-epoch, more epochs won't help much further.
+
+To add a layer instead, go to the Step 5 code cell and insert another block into the `Sequential`
+list, e.g. add this between the existing `Dense(128, ...)` and `Dropout(0.2)` lines:
+
+```python
+tf.keras.layers.Dense(64, activation="relu"),
+```
+
+Re-run Step 5 (you'll see the new layer and a higher parameter count in `model.summary()`), then
+re-run Steps 6-8 to compile, train, and evaluate the new architecture from scratch.
+
+### Try a Convolutional Neural Network (CNN) instead
+
+No setup needed — scroll to the **Bonus: Try a CNN yourself** section at the end of the notebook
+and just run its cells top to bottom. It builds, trains, and evaluates a small CNN independently
+(using `cnn_model` rather than `model`), and prints its test accuracy directly next to the
+original model's from Step 8, so you can compare them immediately.
+
+If you'd rather make the CNN the notebook's *main* model instead of a separate comparison, that
+same Bonus section's "Where in the code above you'd need to change things" part lists the exact
+edits, cell by cell (Steps 4, 5, 7, 8, 9, and 11b) — follow those instead of running the
+standalone bonus cell.
+
+### Test the model against unusual or messy handwriting
+
+Run the Step 11a and 11b cells, then in Step 11's canvas:
+1. Draw a digit in an unusual style — very thin, off-centre, rotated, or an unconventional way of
+   forming a digit (e.g. a 7 with a crossbar, a closed-top 4)
+2. Click **Predict** and see what the model guesses, and how confident it is
+3. Click **No, wrong** if it got it wrong, pick the actual digit from the dropdown, and click
+   **Teach the model**
+4. Draw the same digit again and click **Predict** — it should now be more likely to get it right
+
+If you correct the model on many examples and want to reset it back to its originally-trained
+state, just re-run the Step 7 training cell (this retrains `model` from scratch on the full MNIST
+training set, discarding any canvas-based corrections).
+
+### Explore the backpropagation bonus section further
+
+In the **Bonus: Watch backpropagation happen** section, find the cell containing
+`first_layer_gradients.numpy()[400, :5]` and change `400` to a different pixel index between 0
+and 783. Re-run that cell (and the following one, which also references `400` when picking which
+weight to update) and see how the gradient values and the resulting weight change differ:
+- Indices near the image's edges/corners (e.g. `0`, `27`, `755`) tend to give gradients of exactly
+  `0`, since MNIST digits rarely or never touch those pixels
+- Indices nearer the centre (e.g. `350`-`450`) tend to give the largest, most varied gradients,
+  since that's where digit strokes usually pass through
